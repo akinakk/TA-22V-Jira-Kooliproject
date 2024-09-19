@@ -12,7 +12,7 @@ var DB *sql.DB
 func ConnectDB() {
 	var err error
 
-	connStr := "postgres://postgres:Akaimpc2000xl@localhost:5432/school_db?sslmode=disable"
+	connStr := "postgres://postgres:Passw0rd@localhost:5433/feedbackform?sslmode=disable"
 	DB, err = sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatalf("Database connection error: %v", err)
