@@ -79,6 +79,8 @@ const FeedbackForm = () => {
     reset,
   } = useForm({
     defaultValues: {
+      nimi: "",
+      rühm: "",
       subject: "",
       teacherRating: "",
       workRating: "",
@@ -93,9 +95,7 @@ const FeedbackForm = () => {
 
   const onSubmit = (data) => {
     console.log(data);
-    // Näita teadet, et andmed on edukalt saadetud.
     setOpenSnackbar(true);
-    // Pärast edukat esitamist vormi lähtestamine
     reset();
   };
 
@@ -114,8 +114,46 @@ const FeedbackForm = () => {
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl fullWidth sx={{ mb: 3, width: "50%" }}>
-            <InputLabel sx={{ textAlign: "center" }} shrink>
+          <Controller
+            name="nimi"
+            control={control}
+            rules={{ required: "Kirjuta oma nimi!" }}
+            render={({ field }) => (
+              <>
+                <TextField
+                  {...field}
+                  fullWidth
+                  multiline
+                  rows={1}
+                  placeholder="Nimi"
+                  sx={{ mb: 1 }}
+                />
+                {errors.nimi && <ErrorMessage message={errors.nimi.message} />}
+              </>
+            )}
+          />
+
+          <Controller
+            name="rühm"
+            control={control}
+            rules={{ required: "Kirjuta oma rühm!" }}
+            render={({ field }) => (
+              <>
+                <TextField
+                  {...field}
+                  fullWidth
+                  multiline
+                  rows={1}
+                  placeholder="Rühm"
+                  sx={{ mb: 1 }} 
+                />
+                {errors.rühm && <ErrorMessage message={errors.rühm.message} />}
+              </>
+            )}
+          />
+
+          <FormControl fullWidth sx={{ mb: 3}}>
+            <InputLabel sx={{ textAlign: "center" }} >
               Ainenimi
             </InputLabel>
             <Controller
@@ -126,7 +164,7 @@ const FeedbackForm = () => {
                 <Select
                   {...field}
                   label="Ainenimi"
-                  sx={{ height: "40px", padding: "10px" }} // Vähendage kõrgust ja sisemist süvistust
+                  sx={{ height: "56px", padding: "10px" }}
                 >
                   <MenuItem value="">
                     <em>Vali</em>
