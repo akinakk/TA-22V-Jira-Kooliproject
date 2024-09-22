@@ -4,13 +4,21 @@ import (
 	"encoding/json"
 	"feedback-backend/models"
 	"feedback-backend/services"
+	"feedback-backend/validators"
+	"log"
 	"net/http"
 )
 
 func GetStudents(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	students := services.GetStudents()
+	students, err := services.GetStudents()
+	if err != nil {
+		http.Error(w, "Failed to retrieve students", http.StatusInternalServerError)
+		log.Printf("Error in GetStudents controller: %v", err)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(students)
 }
@@ -24,12 +32,15 @@ func CreateStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if student.Name == "" || student.ClassNumber == "" {
-		http.Error(w, "Name and ClassNumber are required", http.StatusBadRequest)
+	if err := validators.Validate.Struct(student); err != nil {
+		http.Error(w, "Validation failed: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	services.CreateStudent(student)
+	if err := services.CreateStudent(student); err != nil {
+		http.Error(w, "Failed to create student", http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(student)
