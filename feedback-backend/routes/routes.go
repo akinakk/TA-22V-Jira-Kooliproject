@@ -11,5 +11,8 @@ func SetupRoutes() *mux.Router {
 
 	router.HandleFunc("/students", controllers.GetStudents).Methods("GET")
 	router.HandleFunc("/students", controllers.CreateStudent).Methods("POST")
+
+	router.HandleFunc("/courses", controllers.GetCourses).Methods("GET")
+	router.HandleFunc("/courses", controllers.CreateCourse).Methods("POST")
 	return router
 }
