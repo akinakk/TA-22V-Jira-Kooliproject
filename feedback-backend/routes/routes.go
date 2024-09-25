@@ -14,5 +14,8 @@ func SetupRoutes() *mux.Router {
 
 	router.HandleFunc("/courses", controllers.GetCourses).Methods("GET")
 	router.HandleFunc("/courses", controllers.CreateCourse).Methods("POST")
+
+	router.HandleFunc("/submit-feedback", controllers.SubmitFeedback).Methods("POST")
+
 	return router
 }
