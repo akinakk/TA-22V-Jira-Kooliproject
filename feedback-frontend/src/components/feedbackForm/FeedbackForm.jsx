@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 
-// Universaalsed stiilid
 const formStyles = {
   formContainer: {
     bgcolor: "white",
@@ -37,12 +36,10 @@ const formStyles = {
   },
 };
 
-// Komponent vigade kuvamiseks
 const ErrorMessage = ({ message }) => (
   <Typography color="error">{message}</Typography>
 );
 
-// Universaalne komponent raadionuppude jaoks
 const RatingField = ({ control, name, label, error }) => (
   <>
     <Grid item xs={3}>
@@ -52,7 +49,7 @@ const RatingField = ({ control, name, label, error }) => (
       <Controller
         name={name}
         control={control}
-        rules={{ required: "Hinda!" }}
+        rules={{ required: "Please give a rating!" }}
         render={({ field }) => (
           <RadioGroup row {...field}>
             {[1, 2, 3, 4, 5].map((value) => (
@@ -79,8 +76,6 @@ const FeedbackForm = () => {
     reset,
   } = useForm({
     defaultValues: {
-      nimi: "",
-      rühm: "",
       subject: "",
       teacherRating: "",
       workRating: "",
@@ -107,97 +102,60 @@ const FeedbackForm = () => {
     <Box sx={formStyles.pageContainer}>
       <Box sx={formStyles.formContainer}>
         <Typography variant="h5" align="center" gutterBottom>
-          TAGASISIDE
+          FEEDBACK
         </Typography>
         <Typography variant="subtitle1" align="center" gutterBottom>
-          JÄTTA OMA TAGASISIDET
+          LEAVE YOUR FEEDBACK
         </Typography>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            name="nimi"
-            control={control}
-            rules={{ required: "Kirjuta oma nimi!" }}
-            render={({ field }) => (
-              <>
-                <TextField
-                  {...field}
-                  fullWidth
-                  multiline
-                  rows={1}
-                  placeholder="Nimi"
-                  sx={{ mb: 1 }}
-                />
-                {errors.nimi && <ErrorMessage message={errors.nimi.message} />}
-              </>
-            )}
-          />
-
-          <Controller
-            name="rühm"
-            control={control}
-            rules={{ required: "Kirjuta oma rühm!" }}
-            render={({ field }) => (
-              <>
-                <TextField
-                  {...field}
-                  fullWidth
-                  multiline
-                  rows={1}
-                  placeholder="Rühm"
-                  sx={{ mb: 1 }} 
-                />
-                {errors.rühm && <ErrorMessage message={errors.rühm.message} />}
-              </>
-            )}
-          />
-
-          <FormControl fullWidth sx={{ mb: 3}}>
-            <InputLabel sx={{ textAlign: "center" }} >
-              Ainenimi
-            </InputLabel>
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <InputLabel sx={{ textAlign: "center" }}>Course Name</InputLabel>
             <Controller
               name="subject"
               control={control}
-              rules={{ required: "Vali aine" }}
+              rules={{ required: "Please select a course" }}
               render={({ field }) => (
                 <Select
                   {...field}
-                  label="Ainenimi"
+                  label="Course Name"
                   sx={{ height: "56px", padding: "10px" }}
                 >
                   <MenuItem value="">
-                    <em>Vali</em>
+                    <em>Select</em>
                   </MenuItem>
-                  <MenuItem value={10}>Andmebaasid II</MenuItem>
-                  <MenuItem value={20}>Hajusrakenduste alused II</MenuItem>
-                  <MenuItem value={30}>Küberturbe alused</MenuItem>
-                  <MenuItem value={50}>
-                    Riistvaralähedane programmeerimine
+                  <MenuItem value="Databases II">Databases II</MenuItem>
+                  <MenuItem value="Distributed Applications II">
+                    Distributed Applications II
                   </MenuItem>
-                  <MenuItem value={60}>
-                    Serveripoolsed tehnoloogiad veebirakenduste loomiseks
+                  <MenuItem value="Cybersecurity Fundamentals">
+                    Cybersecurity Fundamentals
                   </MenuItem>
-                  <MenuItem value={70}>Tarkvaraarenduse meetodid</MenuItem>
-                  <MenuItem value={80}>
-                    Testimise alused ja testimisplaan
+                  <MenuItem value="Low-Level Programming">
+                    Low-Level Programming
+                  </MenuItem>
+                  <MenuItem value="Server-Side Technologies">
+                    Server-Side Technologies
+                  </MenuItem>
+                  <MenuItem value="Software Development Methods">
+                    Software Development Methods
+                  </MenuItem>
+                  <MenuItem value="Testing Fundamentals and Test Plans">
+                    Testing Fundamentals and Test Plans
                   </MenuItem>
                 </Select>
               )}
             />
-            {errors.subject && (
-              <ErrorMessage message={errors.subject.message} />
-            )}
+            {errors.subject && <ErrorMessage message={errors.subject.message} />}
           </FormControl>
 
-          {/* Punktiväljad */}
           <Grid container alignItems="center" spacing={2} sx={{ mb: 2 }}>
             {[
-              { label: "HINNE ÕPETAJAT", name: "teacherRating" },
-              { label: "HINNE TÖÖD (mida antakse)", name: "workRating" },
-              { label: "KUI HUVITAV TUNNID ON?", name: "interestLevel" },
-              { label: "KUI RASKE ТÖÖ ON?", name: "difficultyLevel" },
-              { label: "KUI KASULIK ON TEILE ANTUD ТÖÖ?", name: "usefulness" },
+              { label: "TEACHER RATING", name: "teacherRating" },
+              { label: "WORK RATING (given work)", name: "workRating" },
+              { label: "INTEREST LEVEL OF THE CLASS?", name: "interestLevel" },
+              { label: "DIFFICULTY OF THE WORK?", name: "difficultyLevel" },
+              { label: "USEFULNESS OF THE WORK?", name: "usefulness" },
             ].map(({ label, name }) => (
               <RatingField
                 key={name}
@@ -209,7 +167,6 @@ const FeedbackForm = () => {
             ))}
           </Grid>
 
-          {/* See Tagasiside tekstikast */}
           <Controller
             name="feedback"
             control={control}
@@ -219,47 +176,24 @@ const FeedbackForm = () => {
                 fullWidth
                 multiline
                 rows={4}
-                placeholder="Kirjuta, mida me võime paremaks teha (optional)"
+                placeholder="Write what we can improve (optional)"
                 variant="outlined"
                 sx={{ mb: 3 }}
               />
             )}
           />
 
-          {/* See on Saada nupp */}
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button
-              variant="contained"
-              sx={formStyles.submitButton}
-              type="submit"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                x="0px"
-                y="0px"
-                width="25"
-                height="25"
-                viewBox="0 0 24 24"
-              >
-                <path d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"></path>
-              </svg>
+            <Button variant="contained" sx={formStyles.submitButton} type="submit">
+              Submit
             </Button>
           </Box>
         </form>
       </Box>
 
-      {/* Teade pärast vormi esitamist */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          Vorm on edukalt esitatud!
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+          Form submitted successfully!
         </Alert>
       </Snackbar>
     </Box>
