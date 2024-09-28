@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import FeedbackForm from "./components/feedbackForm/FeedbackForm";
 import NamePage from "./components/namePage/NamePage";
+import { submitStudentData } from "./services/api";
 import "./App.css";
 
 function App() {
   const [formData, setFormData] = useState({ nimi: "", rühm: "" });
   const [step, setStep] = useState(1);
 
-  const handleNameSubmit = (data) => {
+  const handleNameSubmit = async (data) => {
     setFormData(data);
+    await submitStudentData(data);
     setStep(2);
   };
 

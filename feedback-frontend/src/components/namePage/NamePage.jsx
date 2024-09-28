@@ -29,6 +29,14 @@ const NamePage = ({ onSubmit }) => {
         },
     });
 
+    const handleFormSubmit = (data) => {
+        const studentData = {
+            name: data.name,
+            class_number: data.group,
+        };
+        onSubmit(studentData);
+    };
+
     return (
         <Box sx={formStyles.pageContainer}>
             <Box sx={formStyles.formContainer}>
@@ -36,7 +44,7 @@ const NamePage = ({ onSubmit }) => {
                     Enter Your Name and Group
                 </Typography>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                     <Controller
                         name="name"
                         control={control}
