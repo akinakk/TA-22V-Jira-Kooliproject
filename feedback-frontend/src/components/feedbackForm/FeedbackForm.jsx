@@ -1,20 +1,5 @@
-import React from "react";
-import {
-  Box,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  TextField,
-  Button,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Grid, FormControl, InputLabel, Select, MenuItem, Typography, Radio, RadioGroup, FormControlLabel, TextField, Button, Snackbar, Alert, } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 
 const formStyles = {
@@ -69,6 +54,7 @@ const RatingField = ({ control, name, label, error }) => (
 );
 
 const FeedbackForm = () => {
+  const [courses, setCourses] = useState([]);
   const {
     control,
     handleSubmit,
@@ -86,7 +72,21 @@ const FeedbackForm = () => {
     },
   });
 
-  const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/courses");
+        const data = await response.json();
+        setCourses(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -124,25 +124,11 @@ const FeedbackForm = () => {
                   <MenuItem value="">
                     <em>Select</em>
                   </MenuItem>
-                  <MenuItem value="Databases II">Databases II</MenuItem>
-                  <MenuItem value="Distributed Applications II">
-                    Distributed Applications II
-                  </MenuItem>
-                  <MenuItem value="Cybersecurity Fundamentals">
-                    Cybersecurity Fundamentals
-                  </MenuItem>
-                  <MenuItem value="Low-Level Programming">
-                    Low-Level Programming
-                  </MenuItem>
-                  <MenuItem value="Server-Side Technologies">
-                    Server-Side Technologies
-                  </MenuItem>
-                  <MenuItem value="Software Development Methods">
-                    Software Development Methods
-                  </MenuItem>
-                  <MenuItem value="Testing Fundamentals and Test Plans">
-                    Testing Fundamentals and Test Plans
-                  </MenuItem>
+                  {courses.map((course) => (
+                    <MenuItem key={course.id} value={course.course_name}>
+                      {course.course_name}
+                    </MenuItem>
+                  ))}
                 </Select>
               )}
             />

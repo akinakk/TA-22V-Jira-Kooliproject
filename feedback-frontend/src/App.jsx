@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FeedbackForm from "./components/feedbackForm/FeedbackForm";
 import NamePage from "./components/namePage/NamePage";
-import { submitStudentData } from "./services/api";
+import { submitData } from "./services/api";
 import "./App.css";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
 
   const handleNameSubmit = async (data) => {
     setFormData(data);
-    await submitStudentData(data);
+    await submitData(data, "students");
     setStep(2);
   };
 
