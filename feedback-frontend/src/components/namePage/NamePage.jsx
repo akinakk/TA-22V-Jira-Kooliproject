@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
+import { submitData } from "../../services/api";
+import useAppStore from "../useAppStore";
 
 const formStyles = {
     formContainer: {
@@ -21,7 +23,9 @@ const formStyles = {
     },
 };
 
-const NamePage = ({ onSubmit }) => {
+const NamePage = () => {
+    const { setStep, setFormData } = useAppStore();
+
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             name: "",
@@ -29,12 +33,18 @@ const NamePage = ({ onSubmit }) => {
         },
     });
 
+    const handleNameSubmit = async (data) => {
+        setFormData(data);
+        await submitData(data, "students");
+        setStep(2);
+    };
+
     const handleFormSubmit = (data) => {
         const studentData = {
             name: data.name,
             class_number: data.group,
         };
-        onSubmit(studentData);
+        handleNameSubmit(studentData);
     };
 
     return (

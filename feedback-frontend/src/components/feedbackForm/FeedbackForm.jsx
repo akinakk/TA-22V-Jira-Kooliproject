@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, FormControl, InputLabel, Select, MenuItem, Typography, Radio, RadioGroup, FormControlLabel, TextField, Button, Snackbar, Alert, } from "@mui/material";
+import { Box, Grid, FormControl, InputLabel, Select, MenuItem, Typography, Radio, RadioGroup, FormControlLabel, TextField, Button, Snackbar, Alert } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { getData } from "../../services/api";
 
@@ -56,12 +56,7 @@ const RatingField = ({ control, name, label, error }) => (
 
 const FeedbackForm = () => {
   const [courses, setCourses] = useState([]);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
+  const { control, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       subject: "",
       teacherRating: "",
@@ -160,28 +155,26 @@ const FeedbackForm = () => {
               <TextField
                 {...field}
                 fullWidth
+                label="Your feedback"
                 multiline
                 rows={4}
-                placeholder="Write what we can improve (optional)"
                 variant="outlined"
-                sx={{ mb: 3 }}
+                sx={{ mb: 2 }}
               />
             )}
           />
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="contained" sx={formStyles.submitButton} type="submit">
-              Submit
-            </Button>
-          </Box>
+          <Button variant="contained" sx={formStyles.submitButton} type="submit">
+            Submit Feedback
+          </Button>
         </form>
-      </Box>
 
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
-          Form submitted successfully!
-        </Alert>
-      </Snackbar>
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+            Feedback submitted successfully!
+          </Alert>
+        </Snackbar>
+      </Box>
     </Box>
   );
 };

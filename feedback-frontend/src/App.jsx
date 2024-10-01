@@ -1,25 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import FeedbackForm from "./components/feedbackForm/FeedbackForm";
 import NamePage from "./components/namePage/NamePage";
-import { submitData } from "./services/api";
+import useAppStore from "./components/useAppStore";
 import "./App.css";
 
 function App() {
-  const [formData, setFormData] = useState({ nimi: "", rühm: "" });
-  const [step, setStep] = useState(1);
-
-  const handleNameSubmit = async (data) => {
-    setFormData(data);
-    await submitData(data, "students");
-    setStep(2);
-  };
+  const { step } = useAppStore();
 
   return (
     <div className="App">
       {step === 1 ? (
-        <NamePage onSubmit={handleNameSubmit} />
+        <NamePage />
       ) : (
-        <FeedbackForm formData={formData} />
+        <FeedbackForm />
       )}
     </div>
   );
