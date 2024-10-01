@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Grid, FormControl, InputLabel, Select, MenuItem, Typography, Radio, RadioGroup, FormControlLabel, TextField, Button, Snackbar, Alert, } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
+import { getData } from "../../services/api";
 
 const formStyles = {
   formContainer: {
@@ -77,8 +78,7 @@ const FeedbackForm = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("http://localhost:8080/courses");
-        const data = await response.json();
+        const data = await getData("courses");
         setCourses(data);
       } catch (error) {
         console.error("Error fetching courses:", error);
