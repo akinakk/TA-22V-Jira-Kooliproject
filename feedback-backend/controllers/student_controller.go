@@ -24,24 +24,26 @@ func GetStudents(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateStudent(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+    w.Header().Set("Content-Type", "application/json")
 
-	var student models.Student
-	if err := json.NewDecoder(r.Body).Decode(&student); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
-		return
-	}
+    var student models.Student
+    if err := json.NewDecoder(r.Body).Decode(&student); err != nil {
+        http.Error(w, "Invalid input", http.StatusBadRequest)
+        return
+    }
 
-	if err := validators.Validate.Struct(student); err != nil {
-		http.Error(w, "Validation failed: "+err.Error(), http.StatusBadRequest)
-		return
-	}
+    if err := validators.Validate.Struct(student); err != nil {
+        http.Error(w, "Validation failed: "+err.Error(), http.StatusBadRequest)
+        return
+    }
 
-	if err := services.CreateStudent(student); err != nil {
-		http.Error(w, "Failed to create student", http.StatusInternalServerError)
-		return
-	}
+    id, err := services.CreateStudent(student)
+    if err != nil {
+        http.Error(w, "Failed to create student", http.StatusInternalServerError)
+        return
+    }
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(student)
+    student.ID = id
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(student)
 }

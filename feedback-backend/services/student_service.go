@@ -33,14 +33,15 @@ func GetStudents() ([]models.Student, error) {
 	return students, nil
 }
 
-func CreateStudent(student models.Student) error {
-	query := `INSERT INTO students (name, class_number) VALUES ($1, $2)`
+func CreateStudent(student models.Student) (int, error) {
+    query := `INSERT INTO students (name, class_number) VALUES ($1, $2) RETURNING id`
+    
+    var id int
+    err := db.DB.QueryRow(query, student.Name, student.ClassNumber).Scan(&id)
+    if err != nil {
+        log.Printf("Error inserting student: %v", err)
+        return 0, err
+    }
 
-	_, err := db.DB.Exec(query, student.Name, student.ClassNumber)
-	if err != nil {
-		log.Printf("Error inserting student: %v", err)
-		return err
-	}
-
-	return nil
+    return id, nil
 }
