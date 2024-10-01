@@ -24,7 +24,7 @@ const formStyles = {
 };
 
 const NamePage = () => {
-    const { setStep, setFormData } = useAppStore();
+    const { setStep, setFormData, setStudentId } = useAppStore();
 
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
@@ -35,8 +35,14 @@ const NamePage = () => {
 
     const handleNameSubmit = async (data) => {
         setFormData(data);
-        await submitData(data, "students");
-        setStep(2);
+        try {
+            const response = await submitData(data, "students");
+            const studentId = response.id;
+            setStudentId(studentId);
+            setStep(2);
+        } catch (error) {
+            console.error("Error creating student: ", error);
+        }
     };
 
     const handleFormSubmit = (data) => {

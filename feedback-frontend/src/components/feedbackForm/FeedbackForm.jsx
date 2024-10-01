@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, Grid, FormControl, InputLabel, Select, MenuItem, Typography, Radio, RadioGroup, FormControlLabel, TextField, Button, Snackbar, Alert } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { getData } from "../../services/api";
+import { getData, submitData } from "../../services/api";
+import useAppStore from "../useAppStore";
 
 const formStyles = {
   formContainer: {
@@ -55,16 +56,22 @@ const RatingField = ({ control, name, label, error }) => (
 );
 
 const FeedbackForm = () => {
+  const { studentId } = useAppStore();
   const [courses, setCourses] = useState([]);
-  const { control, handleSubmit, formState: { errors }, reset } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     defaultValues: {
       subject: "",
-      teacherRating: "",
-      workRating: "",
-      interestLevel: "",
-      difficultyLevel: "",
-      usefulness: "",
-      feedback: "",
+      teacher_rating: 0,
+      job_rating: 0,
+      interest_rating: 0,
+      difficulty_rating: 0,
+      usefulness_rating: 0,
+      comment: "",
     },
   });
 
@@ -83,10 +90,25 @@ const FeedbackForm = () => {
     fetchCourses();
   }, []);
 
-  const onSubmit = (data) => {
-    console.log(data);
-    setOpenSnackbar(true);
-    reset();
+  const onSubmit = async (data) => {
+    const payload = {
+      student_id: studentId,
+      course_id: data.subject,
+      teacher_rating: parseInt(data.teacher_rating, 10),
+      job_rating: parseInt(data.job_rating, 10),
+      interest_rating: parseInt(data.interest_rating, 10),
+      difficulty_rating: parseInt(data.difficulty_rating, 10),
+      usefulness_rating: parseInt(data.usefulness_rating, 10),
+      comment: data.comment,
+    };
+
+    try {
+      await submitData(payload, "submit-feedback");
+      setOpenSnackbar(true);
+      reset();
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+    }
   };
 
   const handleCloseSnackbar = () => {
@@ -120,7 +142,7 @@ const FeedbackForm = () => {
                     <em>Select</em>
                   </MenuItem>
                   {courses.map((course) => (
-                    <MenuItem key={course.id} value={course.course_name}>
+                    <MenuItem key={course.id} value={course.id}>
                       {course.course_name}
                     </MenuItem>
                   ))}
@@ -132,11 +154,11 @@ const FeedbackForm = () => {
 
           <Grid container alignItems="center" spacing={2} sx={{ mb: 2 }}>
             {[
-              { label: "TEACHER RATING", name: "teacherRating" },
-              { label: "WORK RATING (given work)", name: "workRating" },
-              { label: "INTEREST LEVEL OF THE CLASS?", name: "interestLevel" },
-              { label: "DIFFICULTY OF THE WORK?", name: "difficultyLevel" },
-              { label: "USEFULNESS OF THE WORK?", name: "usefulness" },
+              { label: "TEACHER RATING", name: "teacher_rating" },
+              { label: "JOB RATING (given work)", name: "job_rating" },
+              { label: "INTEREST LEVEL OF THE CLASS?", name: "interest_rating" },
+              { label: "DIFFICULTY OF THE WORK?", name: "difficulty_rating" },
+              { label: "USEFULNESS OF THE WORK?", name: "usefulness_rating" },
             ].map(({ label, name }) => (
               <RatingField
                 key={name}
@@ -149,7 +171,7 @@ const FeedbackForm = () => {
           </Grid>
 
           <Controller
-            name="feedback"
+            name="comment"
             control={control}
             render={({ field }) => (
               <TextField

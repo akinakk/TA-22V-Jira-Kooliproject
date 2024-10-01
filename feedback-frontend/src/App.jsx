@@ -5,14 +5,14 @@ import useAppStore from "./components/useAppStore";
 import "./App.css";
 
 function App() {
-  const { step } = useAppStore();
+  const { step, studentId } = useAppStore();
 
   return (
     <div className="App">
       {step === 1 ? (
         <NamePage />
       ) : (
-        <FeedbackForm />
+        <FeedbackForm studentId={studentId} />
       )}
     </div>
   );
