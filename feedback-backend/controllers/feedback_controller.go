@@ -34,3 +34,17 @@ func SubmitFeedback(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(feedback)
 }
+
+func FetchFeedback(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	feedbacks, err := services.FetchFeedbacks()
+	if err != nil {
+		http.Error(w, "Failed to retrieve feedbacks", http.StatusInternalServerError)
+		log.Printf("Error in FetchFeedback controller: %v", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(feedbacks)
+}
