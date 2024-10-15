@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { getData } from '../../services/api';
 import FeedbackCard from './FeedbackCard';
 import SearchBar from './SearchBar';
@@ -7,7 +8,7 @@ import SearchBar from './SearchBar';
 const FeedbackPage = () => {
     const [group, setGroup] = useState('All');
     const [course, setCourse] = useState('All');
-    const [filteredFeedbacks, setFilteredFeedbacks] = useState([]);
+    const [filteredFeedbacks, setFilteredFeedbacks] = useState(null);
     const [feedbacks, setFeedbacks] = useState([]);
     const [students, setStudents] = useState([]);
     const [courses, setCourses] = useState([]);
@@ -79,8 +80,10 @@ const FeedbackPage = () => {
         });
     };
 
+    const feedbacksToShow = filteredFeedbacks !== null ? filteredFeedbacks : feedbacks;
+
     return (
-        <Box sx={{ backgroundColor: '#add8e6', padding: 4 }}>
+        <Box sx={{ backgroundColor: '#add8e6', padding: 4, height: '100vh' }}>
             <SearchBar
                 group={group}
                 course={course}
@@ -90,11 +93,22 @@ const FeedbackPage = () => {
             />
 
             <Grid container spacing={4}>
-                {(filteredFeedbacks.length ? enrichFeedbacks(filteredFeedbacks) : enrichFeedbacks(feedbacks)).map((item) => (
-                    <Grid item xs={12} md={6} key={item.id}>
-                        <FeedbackCard feedback={item} />
-                    </Grid>
-                ))}
+                {feedbacksToShow.length === 0 ? (
+                    <Typography variant="h6" align="center" sx={{ width: '100%', mt: 10 }}>
+                        <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+                            <SearchOffIcon sx={{ fontSize: 250, color: '#757575', mb: 2 }} />
+                            <Typography variant="h6" sx={{ color: '#757575', fontStyle: 'italic', fontSize: 30 }}>
+                                Nothing found
+                            </Typography>
+                        </Box>
+                    </Typography>
+                ) : (
+                    enrichFeedbacks(feedbacksToShow).map((item) => (
+                        <Grid item xs={12} md={6} key={item.id}>
+                            <FeedbackCard feedback={item} />
+                        </Grid>
+                    ))
+                )}
             </Grid>
         </Box>
     );
