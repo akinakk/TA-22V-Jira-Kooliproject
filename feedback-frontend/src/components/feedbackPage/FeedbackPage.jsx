@@ -83,7 +83,7 @@ const FeedbackPage = () => {
     const feedbacksToShow = filteredFeedbacks !== null ? filteredFeedbacks : feedbacks;
 
     return (
-        <Box sx={{ backgroundColor: '#add8e6', padding: 4, height: '100vh' }}>
+        <Box sx={{ backgroundColor: '#add8e6', padding: 4, minHeight: '100vh' }}>
             <SearchBar
                 group={group}
                 course={course}
