@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Typography, Box } from '@mui/material';
+import { Paper, Typography, Box, Button, Stack } from '@mui/material';
 
 const FeedbackCard = ({ feedback }) => {
   const averageRating = (
@@ -31,6 +31,14 @@ const FeedbackCard = ({ feedback }) => {
         <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1 }}>
           Esitatud: {new Date(feedback.created_at).toLocaleDateString()}
         </Typography>
+        <Stack direction="row-reverse" spacing={2}>
+          <Button variant="contained" color="success">
+            Edit
+          </Button>
+          <Button variant="contained" color="error">
+            Delete
+          </Button>
+        </Stack>
       </Box>
     </Paper>
   );
