@@ -7,6 +7,9 @@ import (
 	"feedback-backend/validators"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func SubmitFeedback(w http.ResponseWriter, r *http.Request) {
@@ -48,3 +51,25 @@ func FetchFeedback(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(feedbacks)
 }
+
+func FetchFeedbackByID(w http.ResponseWriter, r *http.Request) {
+    log.Println("Fetching feedback by ID")
+    w.Header().Set("Content-Type", "application/json")
+
+    vars := mux.Vars(r)
+    id, err := strconv.Atoi(vars["id"])
+    if err != nil {
+        http.Error(w, "Invalid feedback ID", http.StatusBadRequest)
+        return
+    }
+
+    feedback, err := services.FetchFeedbackByID(id)
+    if err != nil {
+        http.Error(w, "Feedback not found", http.StatusNotFound)
+        return
+    }
+
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(feedback)
+}
+

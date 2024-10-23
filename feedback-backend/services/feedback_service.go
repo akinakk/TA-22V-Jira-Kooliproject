@@ -1,8 +1,10 @@
 package services
 
 import (
+	"database/sql"
 	"feedback-backend/db"
 	"feedback-backend/models"
+	"fmt"
 	"log"
 	"time"
 )
@@ -49,3 +51,21 @@ func FetchFeedbacks() ([]models.Feedback, error) {
 
 	return feedbacks, nil
 }
+
+func FetchFeedbackByID(id int) (*models.Feedback, error) {
+    query := `SELECT id, student_id, course_id, teacher_rating, job_rating, interest_rating, difficulty_rating, usefulness_rating, comment, created_at FROM feedback WHERE id = $1`
+
+    row := db.DB.QueryRow(query, id)
+
+    var feedback models.Feedback
+    err := row.Scan(&feedback.ID, &feedback.StudentID, &feedback.CourseID, &feedback.TeacherRating, &feedback.JobRating, &feedback.InterestRating, &feedback.DifficultyRating, &feedback.UsefulnessRating, &feedback.Comment, &feedback.CreatedAt)
+    if err == sql.ErrNoRows {
+        return nil, fmt.Errorf("no feedback found with ID %d", id)
+    } else if err != nil {
+        log.Printf("Error fetching feedback by ID: %v", err)
+        return nil, err
+    }
+
+    return &feedback, nil
+}
+
