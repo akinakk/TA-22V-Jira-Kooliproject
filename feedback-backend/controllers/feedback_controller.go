@@ -53,7 +53,26 @@ func FetchFeedback(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchFeedbackByID(w http.ResponseWriter, r *http.Request) {
-    log.Println("Fetching feedback by ID")
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "Invalid feedback ID", http.StatusBadRequest)
+		return
+	}
+
+	feedback, err := services.FetchFeedbackByID(id)
+	if err != nil {
+		http.Error(w, "Feedback not found", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(feedback)
+}
+
+func DeleteFeedbackByID(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
 
     vars := mux.Vars(r)
@@ -63,9 +82,13 @@ func FetchFeedbackByID(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    feedback, err := services.FetchFeedbackByID(id)
+    feedback, err := services.DeleteFeedbackByID(id)
     if err != nil {
-        http.Error(w, "Feedback not found", http.StatusNotFound)
+        if err.Error() == "feedback not found" {
+            http.Error(w, "Feedback not found", http.StatusNotFound)
+        } else {
+            http.Error(w, "Failed to delete feedback", http.StatusInternalServerError)
+        }
         return
     }
 

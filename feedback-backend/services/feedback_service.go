@@ -53,19 +53,33 @@ func FetchFeedbacks() ([]models.Feedback, error) {
 }
 
 func FetchFeedbackByID(id int) (*models.Feedback, error) {
-    query := `SELECT id, student_id, course_id, teacher_rating, job_rating, interest_rating, difficulty_rating, usefulness_rating, comment, created_at FROM feedback WHERE id = $1`
+	query := `SELECT id, student_id, course_id, teacher_rating, job_rating, interest_rating, difficulty_rating, usefulness_rating, comment, created_at FROM feedback WHERE id = $1`
 
-    row := db.DB.QueryRow(query, id)
+	row := db.DB.QueryRow(query, id)
 
-    var feedback models.Feedback
-    err := row.Scan(&feedback.ID, &feedback.StudentID, &feedback.CourseID, &feedback.TeacherRating, &feedback.JobRating, &feedback.InterestRating, &feedback.DifficultyRating, &feedback.UsefulnessRating, &feedback.Comment, &feedback.CreatedAt)
-    if err == sql.ErrNoRows {
-        return nil, fmt.Errorf("no feedback found with ID %d", id)
-    } else if err != nil {
-        log.Printf("Error fetching feedback by ID: %v", err)
-        return nil, err
-    }
+	var feedback models.Feedback
+	err := row.Scan(&feedback.ID, &feedback.StudentID, &feedback.CourseID, &feedback.TeacherRating, &feedback.JobRating, &feedback.InterestRating, &feedback.DifficultyRating, &feedback.UsefulnessRating, &feedback.Comment, &feedback.CreatedAt)
+	if err == sql.ErrNoRows {
+		return nil, fmt.Errorf("no feedback found with ID %d", id)
+	} else if err != nil {
+		log.Printf("Error fetching feedback by ID: %v", err)
+		return nil, err
+	}
 
-    return &feedback, nil
+	return &feedback, nil
 }
 
+func DeleteFeedbackByID(id int) (*models.Feedback, error) {
+	query := `DELETE FROM feedback WHERE id = $1 RETURNING id, student_id, course_id, teacher_rating, job_rating, interest_rating, difficulty_rating, usefulness_rating, comment, created_at`
+
+	var feedback models.Feedback
+	err := db.DB.QueryRow(query, id).Scan(&feedback.ID, &feedback.StudentID, &feedback.CourseID, &feedback.TeacherRating, &feedback.JobRating, &feedback.InterestRating, &feedback.DifficultyRating, &feedback.UsefulnessRating, &feedback.Comment, &feedback.CreatedAt)
+	if err == sql.ErrNoRows {
+		return nil, fmt.Errorf("feedback not found")
+	} else if err != nil {
+		log.Printf("Error deleting feedback by ID: %v", err)
+		return nil, err
+	}
+
+	return &feedback, nil
+}

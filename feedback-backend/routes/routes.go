@@ -17,6 +17,7 @@ func SetupRoutes() *mux.Router {
 
 	router.HandleFunc("/submit-feedback", controllers.FetchFeedback).Methods("GET")
 	router.HandleFunc("/submit-feedback/{id}", controllers.FetchFeedbackByID).Methods("GET")
+	router.HandleFunc("/submit-feedback/{id}", controllers.DeleteFeedbackByID).Methods("DELETE")
 	router.HandleFunc("/submit-feedback", controllers.SubmitFeedback).Methods("POST")
 
 	return router
