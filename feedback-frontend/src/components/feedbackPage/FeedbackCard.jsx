@@ -1,7 +1,8 @@
 import React from 'react';
 import { Paper, Typography, Box, Button, Stack } from '@mui/material';
+import { deleteData } from '../../services/api';
 
-const FeedbackCard = ({ feedback }) => {
+const FeedbackCard = ({ feedback, onDelete }) => {
   const averageRating = (
     feedback.teacher_rating +
     feedback.job_rating +
@@ -9,6 +10,17 @@ const FeedbackCard = ({ feedback }) => {
     feedback.difficulty_rating +
     feedback.usefulness_rating
   ) / 5;
+
+  const handleDelete = async () => {
+    try {
+      await deleteData(feedback.id);
+      if (onDelete) {
+        onDelete(feedback.id);
+      }
+    } catch (error) {
+      console.error("Error deleting feedback:", error);
+    }
+  };
 
   return (
     <Paper elevation={3} sx={{ padding: 2, borderRadius: 2 }}>
@@ -35,7 +47,7 @@ const FeedbackCard = ({ feedback }) => {
           <Button variant="contained" color="success">
             Edit
           </Button>
-          <Button variant="contained" color="error">
+          <Button variant="contained" color="error" onClick={handleDelete}>
             Delete
           </Button>
         </Stack>

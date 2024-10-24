@@ -33,3 +33,23 @@ export const getData = async (path) => {
         throw error;
     }
 };
+
+export const deleteData = async (id) => {
+    try {
+        const response = await fetch(`http://localhost:8080/submit-feedback/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error("Error deleting data:", error);
+        throw error;
+    }
+};
