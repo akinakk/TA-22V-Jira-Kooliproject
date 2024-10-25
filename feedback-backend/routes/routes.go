@@ -15,10 +15,11 @@ func SetupRoutes() *mux.Router {
 	router.HandleFunc("/courses", controllers.GetCourses).Methods("GET")
 	router.HandleFunc("/courses", controllers.CreateCourse).Methods("POST")
 
+	router.HandleFunc("/submit-feedback", controllers.SubmitFeedback).Methods("POST")
 	router.HandleFunc("/submit-feedback", controllers.FetchFeedback).Methods("GET")
 	router.HandleFunc("/submit-feedback/{id}", controllers.FetchFeedbackByID).Methods("GET")
+	router.HandleFunc("/submit-feedback/{id}", controllers.UpdateFeedbackByID).Methods("PUT")
 	router.HandleFunc("/submit-feedback/{id}", controllers.DeleteFeedbackByID).Methods("DELETE")
-	router.HandleFunc("/submit-feedback", controllers.SubmitFeedback).Methods("POST")
 
 	return router
 }

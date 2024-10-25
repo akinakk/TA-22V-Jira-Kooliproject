@@ -73,26 +73,58 @@ func FetchFeedbackByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteFeedbackByID(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
-    vars := mux.Vars(r)
-    id, err := strconv.Atoi(vars["id"])
-    if err != nil {
-        http.Error(w, "Invalid feedback ID", http.StatusBadRequest)
-        return
-    }
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "Invalid feedback ID", http.StatusBadRequest)
+		return
+	}
 
-    feedback, err := services.DeleteFeedbackByID(id)
-    if err != nil {
-        if err.Error() == "feedback not found" {
-            http.Error(w, "Feedback not found", http.StatusNotFound)
-        } else {
-            http.Error(w, "Failed to delete feedback", http.StatusInternalServerError)
-        }
-        return
-    }
+	feedback, err := services.DeleteFeedbackByID(id)
+	if err != nil {
+		if err.Error() == "feedback not found" {
+			http.Error(w, "Feedback not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Failed to delete feedback", http.StatusInternalServerError)
+		}
+		return
+	}
 
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(feedback)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(feedback)
 }
 
+func UpdateFeedbackByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "Invalid feedback ID", http.StatusBadRequest)
+		return
+	}
+
+	var updatedFeedback models.Feedback
+	if err := json.NewDecoder(r.Body).Decode(&updatedFeedback); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		log.Printf("Error decoding feedback: %v", err)
+		return
+	}
+
+	if err := validators.Validate.Struct(updatedFeedback); err != nil {
+		http.Error(w, "Validation failed: "+err.Error(), http.StatusBadRequest)
+		log.Printf("Validation error: %v", err)
+		return
+	}
+
+	if err := services.UpdateFeedbackByID(id, updatedFeedback); err != nil {
+		http.Error(w, "Failed to update feedback", http.StatusInternalServerError)
+		log.Printf("Error updating feedback: %v", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(updatedFeedback)
+}

@@ -83,3 +83,23 @@ func DeleteFeedbackByID(id int) (*models.Feedback, error) {
 
 	return &feedback, nil
 }
+
+func UpdateFeedbackByID(id int, updatedFeedback models.Feedback) error {
+	query := `
+        UPDATE feedback
+        SET student_id = $1, course_id = $2, teacher_rating = $3, job_rating = $4, interest_rating = $5,
+            difficulty_rating = $6, usefulness_rating = $7, comment = $8, created_at = $9
+        WHERE id = $10
+    `
+
+	_, err := db.DB.Exec(query, updatedFeedback.StudentID, updatedFeedback.CourseID, updatedFeedback.TeacherRating,
+		updatedFeedback.JobRating, updatedFeedback.InterestRating, updatedFeedback.DifficultyRating,
+		updatedFeedback.UsefulnessRating, updatedFeedback.Comment, time.Now(), id)
+
+	if err != nil {
+		log.Printf("Error updating feedback by ID: %v", err)
+		return err
+	}
+
+	return nil
+}
