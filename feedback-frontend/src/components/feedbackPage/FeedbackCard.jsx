@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Paper, Typography, Box, Button, Stack } from '@mui/material';
+import EditFeedbackForm from './EditFeedbackForm';
 import { deleteData } from '../../services/api';
 
-const FeedbackCard = ({ feedback, onDelete }) => {
-  const averageRating = (
-    feedback.teacher_rating +
-    feedback.job_rating +
-    feedback.interest_rating +
-    feedback.difficulty_rating +
-    feedback.usefulness_rating
-  ) / 5;
+const FeedbackCard = ({ feedback, onDelete, onUpdate }) => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
 
   const handleDelete = async () => {
     try {
@@ -21,6 +20,23 @@ const FeedbackCard = ({ feedback, onDelete }) => {
       console.error("Error deleting feedback:", error);
     }
   };
+
+  const handleUpdate = async (updatedFeedback) => {
+    try {
+      await onUpdate(updatedFeedback);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating feedback:", error);
+    }
+  };
+
+  const averageRating = (
+    feedback.teacher_rating +
+    feedback.job_rating +
+    feedback.interest_rating +
+    feedback.difficulty_rating +
+    feedback.usefulness_rating
+  ) / 5 || 0;
 
   return (
     <Paper elevation={3} sx={{ padding: 2, borderRadius: 2 }}>
@@ -40,11 +56,8 @@ const FeedbackCard = ({ feedback, onDelete }) => {
         >
           Keskmine hinne: {averageRating.toFixed(2)}
         </Typography>
-        <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1 }}>
-          Esitatud: {new Date(feedback.created_at).toLocaleDateString()}
-        </Typography>
         <Stack direction="row-reverse" spacing={2}>
-          <Button variant="contained" color="success">
+          <Button variant="contained" color="success" onClick={handleEditClick}>
             Edit
           </Button>
           <Button variant="contained" color="error" onClick={handleDelete}>
@@ -52,6 +65,13 @@ const FeedbackCard = ({ feedback, onDelete }) => {
           </Button>
         </Stack>
       </Box>
+
+      <EditFeedbackForm
+        open={isEditing}
+        feedback={feedback}
+        onClose={() => setIsEditing(false)}
+        onSave={handleUpdate}
+      />
     </Paper>
   );
 };

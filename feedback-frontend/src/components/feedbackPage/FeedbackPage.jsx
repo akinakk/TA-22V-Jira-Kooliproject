@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
-import { getData } from '../../services/api';
+import { getData, updateData } from '../../services/api';
 import FeedbackCard from './FeedbackCard';
 import SearchBar from './SearchBar';
 
@@ -81,6 +81,19 @@ const FeedbackPage = () => {
     setFeedbacks((prevFeedbacks) => prevFeedbacks.filter((feedback) => feedback.id !== id));
   };
 
+  const handleUpdateFeedback = async (updatedFeedback) => {
+    try {
+      await updateData(`${updatedFeedback.id}`, updatedFeedback);
+      setFeedbacks((prevFeedbacks) =>
+        prevFeedbacks.map((feedback) =>
+          feedback.id === updatedFeedback.id ? updatedFeedback : feedback
+        )
+      );
+    } catch (error) {
+      console.error('Error updating feedback:', error);
+    }
+  };
+
   const feedbacksToShow = filteredFeedbacks !== null ? filteredFeedbacks : feedbacks;
 
   return (
@@ -100,7 +113,11 @@ const FeedbackPage = () => {
         ) : (
           enrichFeedbacks(feedbacksToShow).map((item) => (
             <Grid item xs={12} md={6} key={item.id}>
-              <FeedbackCard feedback={item} onDelete={handleDeleteFeedback} />
+              <FeedbackCard
+                feedback={item}
+                onDelete={handleDeleteFeedback}
+                onUpdate={handleUpdateFeedback}
+              />
             </Grid>
           ))
         )}
