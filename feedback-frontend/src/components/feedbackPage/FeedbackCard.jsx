@@ -56,7 +56,7 @@ const FeedbackCard = ({ feedback, onDelete, onUpdate }) => {
         >
           Keskmine hinne: {averageRating.toFixed(2)}
         </Typography>
-        <Stack direction="row-reverse" spacing={2}>
+        <Stack direction="row-reverse" spacing={2} paddingTop={2}>
           <Button variant="contained" color="success" onClick={handleEditClick}>
             Edit
           </Button>
